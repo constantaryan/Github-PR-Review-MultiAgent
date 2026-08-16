@@ -1,0 +1,140 @@
+[project]
+name = "ai-pr-review-agent"
+version = "0.1.0"
+description = "Production-grade AI Pull Request Review Agent"
+requires-python = ">=3.10"
+
+dependencies = [
+    # Web framework - FastAPI is async-native, fast, and has automatic API docs
+    "fastapi==0.136.1",
+    # ASGI server - runs our FastAPI app
+    "uvicorn[standard]==0.46.0",
+    # Data validation - Pydantic v2 for all our models and settings
+    "pydantic==2.13.4",
+    # Settings management - reads from .env file and environment variables
+    "pydantic-settings==2.14.1",
+    # HTTP client - used by GitHub client, async-native
+    "httpx==0.28.1",
+    # Redis client - job queue + short-term memory
+    "redis==5.3.1",
+    # Job queue backed by Redis - ARQ (async, not RQ)
+    "arq==0.28.0",
+    # Postgres async driver - for structured review history
+    "asyncpg>=0.29.0",
+    "pgvector>=0.3.0",
+    # ORM for Postgres - SQLAlchemy async mode
+    "sqlalchemy[asyncio]==2.0.49",
+    # LangGraph - workflow orchestration (ADR-001)
+    "langgraph==1.2.0",
+    # LangChain core - base classes used by LangGraph
+    "langchain-core==1.4.0",
+    # OpenAI SDK - one of our model providers
+    "openai==2.36.0",
+    # Anthropic SDK - second model provider (for security analysis)
+    "anthropic==0.101.0",
+    # Qdrant client - vector store for RAG
+    "qdrant-client>=1.9.0",
+    # python-dotenv comes in transitively via pydantic-settings. Removed
+    # direct declaration in cleanup pass — see ADR-005.
+    # OpenTelemetry - Phase 10 Observability & Tracing
+    # API is the vendor-neutral facade; SDK provides the in-process implementation.
+    # OTLP exporter ships traces to a collector (Jaeger/Grafana Tempo) via HTTP.
+    # Wiki: "Observability must be designed as infrastructure, not retrofitted."
+    # opensre uses the same three-package split (opentelemetry-api + sdk + otlp exporter).
+    "opentelemetry-api==1.41.1",
+    "opentelemetry-sdk==1.41.1",
+    "opentelemetry-exporter-otlp-proto-http==1.41.1",
+    # Sentry - runtime error capture with sensitive-field scrubbing
+    # opensre pattern: init_sentry() once per process entrypoint; scrubs _key/_token headers.
+    "sentry-sdk==2.59.0",
+    "annotated-doc==0.0.4",
+    "annotated-types==0.7.0",
+    "anyio==4.13.0",
+    "async-timeout==5.0.1 ; python_full_version < '3.11.3'",
+    "certifi==2026.4.22",
+    "charset-normalizer==3.4.7",
+    "click==8.3.3",
+    "colorama==0.4.6 ; sys_platform == 'win32'",
+    "distro==1.9.0",
+    "docstring-parser==0.18.0",
+    "exceptiongroup==1.3.1 ; python_full_version < '3.11'",
+    "googleapis-common-protos==1.75.0",
+    "greenlet==3.5.0",
+    "grpcio==1.80.0",
+    "h11==0.16.0",
+    "h2==4.3.0",
+    "hiredis==3.3.1",
+    "hpack==4.1.0",
+    "httpcore==1.0.9",
+    "httptools==0.7.1",
+    "hyperframe==6.1.0",
+    "idna==3.14",
+    "importlib-metadata==8.7.1",
+    "jiter==0.14.0",
+    "jsonpatch==1.33",
+    "jsonpointer==3.1.1",
+    "langchain-protocol==0.0.15",
+    "langgraph-checkpoint==4.1.0",
+    "langgraph-prebuilt==1.1.0",
+    "langgraph-sdk==0.3.14",
+    "langsmith==0.8.3",
+    "numpy==2.2.6 ; python_full_version < '3.11'",
+    "numpy==2.4.4 ; python_full_version >= '3.11'",
+    "opentelemetry-exporter-otlp-proto-common==1.41.1",
+    "opentelemetry-proto==1.41.1",
+    "opentelemetry-semantic-conventions==0.62b1",
+    "orjson==3.11.9",
+    "ormsgpack==1.12.2",
+    "packaging==26.2",
+    "portalocker==3.2.0",
+    "protobuf==6.33.6",
+    "pydantic-core==2.46.4",
+    "pyjwt==2.12.1",
+    "python-dotenv==1.2.2",
+    "pywin32==311 ; sys_platform == 'win32'",
+    "pyyaml==6.0.3",
+    "requests==2.34.0",
+    "requests-toolbelt==1.0.0",
+    "sniffio==1.3.1",
+    "starlette==1.0.0",
+    "tenacity==9.1.4",
+    "tqdm==4.67.3",
+    "typing-extensions==4.15.0",
+    "typing-inspection==0.4.2",
+    "urllib3==2.7.0",
+    "uuid-utils==0.15.0",
+    "uvloop==0.22.1 ; platform_python_implementation != 'PyPy' and sys_platform != 'cygwin' and sys_platform != 'win32'",
+    "watchfiles==1.1.1",
+    "websockets==16.0",
+    "xxhash==3.7.0",
+    "zipp==3.23.1",
+    "zstandard==0.25.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    # Testing framework
+    "pytest>=8.0.0",
+    # Async test support
+    "pytest-asyncio>=0.23.0",
+    # HTTP test client for FastAPI
+    "httpx>=0.27.0",
+    # Code formatter
+    "ruff>=0.4.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["backend"]
+
+[tool.ruff]
+# Ruff is a fast Python linter and formatter
+line-length = 88
+target-version = "py311"
+
+[tool.pytest.ini_options]
+# Tell pytest to handle async test functions automatically
+asyncio_mode = "auto"
