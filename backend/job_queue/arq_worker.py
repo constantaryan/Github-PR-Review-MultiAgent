@@ -64,6 +64,7 @@ from backend.core import (
 )
 from backend.memory.redis_client import redis_client
 from backend.orchestrator.langgraph_engine import LangGraphEngine
+from backend.database.postgres import init_tiger_schema
 
 logger = logging.getLogger(__name__)
 
@@ -379,6 +380,11 @@ class WorkerSettings:
         """Connect the shared redis_client used by run_pr_review."""
         await redis_client.connect()
         logger.info("ARQ worker redis_client connected.")
+        try:
+            await init_tiger_schema()
+            logger.info("ARQ worker Tiger Cloud initialized.")
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("ARQ worker Tiger Cloud unavailable: %s", exc)
 
     @staticmethod
     async def on_shutdown(ctx: dict) -> None:
