@@ -173,6 +173,7 @@ class TigerMemoryClient:
             max_size=max_size,
             init=_init_conn,
             command_timeout=30,
+            ssl='require',
         )
         logger.info(
             "Tiger Cloud pool created | host=%s min=%d max=%d",
