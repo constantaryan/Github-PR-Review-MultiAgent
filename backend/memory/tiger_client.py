@@ -507,7 +507,8 @@ class TigerMemoryClient:
             symbol=row["symbol"],
             chunk_index=row["chunk_index"],
             content=row["content"],
-            embedding=list(row["embedding"]) if row["embedding"] is not None else [],
+            # embedding=list(row["embedding"]) if row["embedding"] is not None else [],
+            embedding=list(row["embedding"].to_list()) if row["embedding"] is not None else [],
             token_count=row["token_count"],
             updated_at=row["updated_at"],
         )
