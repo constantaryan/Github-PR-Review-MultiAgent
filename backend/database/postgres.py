@@ -366,7 +366,9 @@ async def init_tiger_schema() -> None:
     cfg = get_settings()
     dsn = cfg.tiger_database_url or cfg.database_url
     # asyncpg wants plain postgresql:// not postgresql+asyncpg:// (that's SQLAlchemy syntax)
+    # dsn = dsn.replace("postgresql+asyncpg://", "postgresql://").replace("postgres+asyncpg://", "postgresql://")
     dsn = dsn.replace("postgresql+asyncpg://", "postgresql://").replace("postgres+asyncpg://", "postgresql://")
+    dsn = dsn.replace("ssl=require", "sslmode=require")
 
     # Build the pool with pgvector codec registered on every new connection.
     async def _init_conn(conn):
