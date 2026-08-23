@@ -169,7 +169,8 @@ async def retrieve_context_for_diff(
 
     # Step 4: Filter by minimum similarity score.
     # (RAG-Architecture.md: "If both agree, confidence rises; if neither agrees, skip.")
-    relevant_results = [r for r in results if r.get("score", 0.0) >= MIN_SIMILARITY_SCORE]
+    # relevant_results = [r for r in results if r.get("score", 0.0) >= MIN_SIMILARITY_SCORE]
+    relevant_results = [r for r in results if getattr(r, "score", 0.0) >= MIN_SIMILARITY_SCORE]
 
     if not relevant_results:
         logger.debug(

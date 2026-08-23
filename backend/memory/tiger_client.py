@@ -162,6 +162,8 @@ class TigerMemoryClient:
         resolved_dsn = dsn or cfg.tiger_database_url or cfg.database_url
         # asyncpg DSN format: postgres:// or postgresql+asyncpg:// -> strip driver prefix
         resolved_dsn = resolved_dsn.replace("postgresql+asyncpg://", "postgresql://")
+        # Remove ?ssl=require from DSN — we handle SSL via pool parameter below
+        # resolved_dsn = resolved_dsn.replace("?ssl=require", "")
 
         async def _init_conn(conn: asyncpg.Connection) -> None:
             # Register pgvector codec so VECTOR columns come back as Python lists
@@ -173,6 +175,7 @@ class TigerMemoryClient:
             max_size=max_size,
             init=_init_conn,
             command_timeout=30,
+            # ssl='require',
         )
         logger.info(
             "Tiger Cloud pool created | host=%s min=%d max=%d",
@@ -504,7 +507,8 @@ class TigerMemoryClient:
             symbol=row["symbol"],
             chunk_index=row["chunk_index"],
             content=row["content"],
-            embedding=list(row["embedding"]) if row["embedding"] is not None else [],
+            # embedding=list(row["embedding"]) if row["embedding"] is not None else [],
+            embedding=list(row["embedding"].to_list()) if row["embedding"] is not None else [],
             token_count=row["token_count"],
             updated_at=row["updated_at"],
         )
