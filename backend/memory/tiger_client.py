@@ -162,6 +162,8 @@ class TigerMemoryClient:
         resolved_dsn = dsn or cfg.tiger_database_url or cfg.database_url
         # asyncpg DSN format: postgres:// or postgresql+asyncpg:// -> strip driver prefix
         resolved_dsn = resolved_dsn.replace("postgresql+asyncpg://", "postgresql://")
+        # Remove ?ssl=require from DSN — we handle SSL via pool parameter below
+        resolved_dsn = resolved_dsn.replace("?ssl=require", "")
 
         async def _init_conn(conn: asyncpg.Connection) -> None:
             # Register pgvector codec so VECTOR columns come back as Python lists
